@@ -30,7 +30,12 @@ model Home{
   country String?
   photo String?
   price Int?
+  categoryName String?
+  locationName String?
   createdAt DateTime @default(now())
+  addedCategory Boolean @default(false)
+  addedDescription Boolean @default(false)
+  addedLocation Boolean @default(false)
 
   User User? @relation(fields: [userId], references: [id])
   userId String?
