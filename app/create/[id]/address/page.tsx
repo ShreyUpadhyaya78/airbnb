@@ -1,3 +1,4 @@
+"use client";
 import { useCountries } from '@/app/lib/getCountries';
 import Flag from 'react-world-flags';
 import {
@@ -12,9 +13,13 @@ import { SelectValue } from '@radix-ui/react-select';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import CreationBottomBar from '@/app/components/CreationBottomBar';
+import { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { createLocation } from '@/app/actions';
 
-export default function addressRoute() {
+export default function addressRoute({params}:{params:{id:string}}) {
   const { getAllCountries } = useCountries();
+  const [locationValue,setLocationValue]=useState("");
   const LazyMap=dynamic(()=> import ("@/app/components/Map"),{
 ssr:false,
 loading:()=><Skeleton className='h-[50vh] w-full'/>
@@ -26,10 +31,12 @@ loading:()=><Skeleton className='h-[50vh] w-full'/>
           Where is your Home located?
         </h2>
       </div>
-      <form action=''>
+      <form action={createLocation}>
+        <Input type='hidden' name='homeId' value={params.id} />
+        <Input type='hidden' name='countryValue' value={locationValue} />
         <div className='w-3/5 mx-auto mb-36'>
           <div className='mb-5'>
-            <Select required>
+            <Select required onValueChange={(value)=>setLocationValue(value)}>
               <SelectTrigger className='w-full'>
                 <SelectValue placeholder='Select a Country' />
               </SelectTrigger>
@@ -48,7 +55,7 @@ loading:()=><Skeleton className='h-[50vh] w-full'/>
               </SelectContent>
             </Select>
           </div>
-          <LazyMap />
+          <LazyMap locationValue={locationValue} />
         </div>
         <CreationBottomBar />
       </form>

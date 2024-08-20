@@ -28,12 +28,23 @@ export default async function createAirbnbHome({ userId }: { userId: string }) {
   else if(data.addedCategory && !data.addedDescription){
 return redirect(`/create/${data.id}/description`);
   }
+  else if(data.addedCategory && data.addedDescription && !data.addedLocation){
+    return redirect(`/create/${data.id}/address`);
+  }
+  else if(data.addedCategory && data.addedDescription && data.addedLocation){
+    const data = await prisma.home.create({
+      data: {
+        userId: userId,
+      },
+    });
+    return redirect(`/create/${data.id}/structure`);
+  }
 }
 
 export async function createCategoryPage(formData:FormData){
     const categoryName=formData.get('categoryName') as string;
     const homeId = formData.get('homeId') as string;
-const data=prisma.home.update({
+const data=await prisma.home.update({
     where:{
         id:homeId
     },
@@ -73,4 +84,19 @@ const data=await prisma.home.update({
   }
 })
 return redirect(`/create/${homeId}/address`);
+}
+
+export async function createLocation(formData:FormData){
+const homeId=formData.get("homeId") as string
+const countryValue=formData.get("countryValue") as string
+  const data =await prisma.home.update({
+  where:{
+    id:homeId,
+  },
+  data:{
+    addedLocation:true,
+    country:countryValue,
+  },
+})
+return redirect('/');
 }
