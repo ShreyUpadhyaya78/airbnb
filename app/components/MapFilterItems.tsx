@@ -17,7 +17,7 @@ export default function MapFilterItems() {
         },[searchParams]
     );
   return (
-    <div className="flex gap-x-10 mt-5 w-full overflow-x-scroll no-scrollbar">
+    <div className="flex gap-x-12 mt-5 w-full overflow-x-scroll no-scrollbar">
         {categoryItems.map((item) => {
             return (
               <Link key={item.id} href={

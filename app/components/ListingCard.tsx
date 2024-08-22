@@ -23,10 +23,10 @@ export default function ListingCard({
           src={`https://zfronslehmtoeeccaqyn.supabase.co/storage/v1/object/public/images/${imagePath}`}
           alt='Image of a house'
           fill
-          className='rounded-lg h-full object-cover mb-3'
+          className='rounded-lg h-full object-cover'
         />
       </div>
-      <Link href={'/'}>
+      <Link href={'/'} className="mt-2">
         <h3 className='font-medium text-base flex'>
           <Flag code={country?.value} height='18' width='18' className='pr-1' />
           {country?.label} / {country?.region}
