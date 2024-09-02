@@ -3,11 +3,14 @@ import ListingCard from "./components/ListingCard";
 import MapFilterItems from "./components/MapFilterItems";
 import prisma from "./lib/db";
 import SkeletonCard from "./components/SkeletonCard";
+import NoItems from "./components/NoItems";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 async function getData({
-  searchParams,
+  searchParams,userId
 }: {
   searchParams?: { filter?: string };
+  userId:string | undefined;
 }) {
   const data = await prisma.home.findMany({
     where: {
@@ -22,6 +25,11 @@ async function getData({
       description: true,
       price: true,
       country: true,
+      Favorite:{
+        where:{
+          userId:userId ?? undefined,
+        },
+      },
     },
   });
   return data;
@@ -46,9 +54,15 @@ async function ShowItems({
 }: {
   searchParams?: { filter?: string };
 }) {
-    const data = await getData({ searchParams: searchParams });
+  const {getUser}=getKindeServerSession();
+  const user=await getUser();
+    const data = await getData({ searchParams: searchParams , userId:user?.id});
     return(
-    <div className='grid lg:grid-cols-4 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-8'>
+    <>{
+      data.length === 0 ? (
+        <NoItems />
+
+     ) : (<div className='grid lg:grid-cols-4 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-8'>
       {data.map((item) => (
         <ListingCard
           key={item.id}
@@ -56,9 +70,15 @@ async function ShowItems({
           price={item.price as number}
           imagePath={item.photo as string}
           location={item.country as string}
+          userId={user?.id}
+          favoriteId={item.Favorite[0]?.id}
+          isInFavoriteList={item.Favorite.length > 0 ? true :false}
+          homeId={item.id}
+          pathName="/"
         />
       ))}
-    </div>
+    </div>)
+    }</>
     )
 }
 
