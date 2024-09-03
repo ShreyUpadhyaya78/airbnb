@@ -57,29 +57,33 @@ async function ShowItems({
   const {getUser}=getKindeServerSession();
   const user=await getUser();
     const data = await getData({ searchParams: searchParams , userId:user?.id});
-    return(
-    <>{
-      data.length === 0 ? (
-        <NoItems />
-
-     ) : (<div className='grid lg:grid-cols-4 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-8'>
-      {data.map((item) => (
-        <ListingCard
-          key={item.id}
-          description={item.description as string}
-          price={item.price as number}
-          imagePath={item.photo as string}
-          location={item.country as string}
-          userId={user?.id}
-          favoriteId={item.Favorite[0]?.id}
-          isInFavoriteList={item.Favorite.length > 0 ? true :false}
-          homeId={item.id}
-          pathName="/"
-        />
-      ))}
-    </div>)
-    }</>
-    )
+    return (
+      <>
+        {data.length === 0 ? (
+          <NoItems
+            description='Please check other category or create your own listing!'
+            title='Sorry no listings found for this category...'
+          />
+        ) : (
+          <div className='grid lg:grid-cols-4 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-8'>
+            {data.map((item) => (
+              <ListingCard
+                key={item.id}
+                description={item.description as string}
+                price={item.price as number}
+                imagePath={item.photo as string}
+                location={item.country as string}
+                userId={user?.id}
+                favoriteId={item.Favorite[0]?.id}
+                isInFavoriteList={item.Favorite.length > 0 ? true : false}
+                homeId={item.id}
+                pathName='/'
+              />
+            ))}
+          </div>
+        )}
+      </>
+    );
 }
 
 function SkeletonLoading(){
