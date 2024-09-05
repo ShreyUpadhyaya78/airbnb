@@ -58,7 +58,7 @@ export default function ListingCard({
           </div>
         )}
       </div>
-      <Link href={'/'} className='mt-2'>
+      <Link href={`/home/${homeId}`} className='mt-2'>
         <h3 className='font-medium text-base flex'>
           <Flag code={country?.value} height='18' width='18' className='pr-1' />
           {country?.label} / {country?.region}
