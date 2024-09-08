@@ -1,4 +1,6 @@
 import CategoryShowcase from '@/app/components/CategoryShowcase';
+import HomeMap from '@/app/components/HomeMap';
+import SelectCalendar from '@/app/components/SelectCalendar';
 import prisma from '@/app/lib/db';
 import { useCountries } from '@/app/lib/getCountries';
 import { Separator } from '@/components/ui/separator';
@@ -86,7 +88,10 @@ export default async function HomeRoute({
             <CategoryShowcase categoryName={data?.categoryName as string} />
             <Separator className="my-7"/>
             <p className="text-muted-foreground text-justify">{data?.description}</p>
+            <Separator className="my-7"/>
+            <HomeMap locationValue={country?.value as string} />
           </div>
+          <SelectCalendar />
         </div>
       </div>
     </>
