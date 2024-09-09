@@ -1,11 +1,15 @@
+import { createReservation } from '@/app/actions';
 import CategoryShowcase from '@/app/components/CategoryShowcase';
 import HomeMap from '@/app/components/HomeMap';
 import SelectCalendar from '@/app/components/SelectCalendar';
+import { ReservationSubmitButton } from '@/app/components/SubmitButtons';
 import prisma from '@/app/lib/db';
 import { useCountries } from '@/app/lib/getCountries';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import Image from 'next/image';
+import Link from 'next/link';
 import Flag from 'react-world-flags';
 
 async function getData(homeId: string) {
@@ -23,13 +27,18 @@ async function getData(homeId: string) {
       categoryName: true,
       price: true,
       country: true,
-      createdAt:true,
-      User:{
-        select:{
-            profileImage:true,
-            firstName:true,
-        }
-      }
+      createdAt: true,
+      Reservation: {
+        where: {
+          homeId: homeId,
+        },
+      },
+      User: {
+        select: {
+          profileImage: true,
+          firstName: true,
+        },
+      },
     },
   });
   return data;
@@ -41,8 +50,10 @@ export default async function HomeRoute({
   params: { id: string };
 }) {
   const data = await getData(params.id);
-  const {getCountryByValue}=useCountries();
-  const country =getCountryByValue(data?.country as string);
+  const { getCountryByValue } = useCountries();
+  const country = getCountryByValue(data?.country as string);
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
   return (
     <>
       <div className='mx-auto mt-10 w-[75%] mb-12'>
@@ -79,19 +90,34 @@ export default async function HomeRoute({
                 alt='User Profile Image'
                 className='w-11 h-11 rounded-full'
               />
-            <div className="flex-col flex ml-4">
-<h3 className='font-medium'>Hosted by {data?.User?.firstName}</h3>
-            <p className='text-sm text-muted-foreground'>Host since 2018</p>
+              <div className='flex-col flex ml-4'>
+                <h3 className='font-medium'>
+                  Hosted by {data?.User?.firstName}
+                </h3>
+                <p className='text-sm text-muted-foreground'>Host since 2018</p>
+              </div>
             </div>
-            </div>
-            <Separator className="my-7"/>
+            <Separator className='my-7' />
             <CategoryShowcase categoryName={data?.categoryName as string} />
-            <Separator className="my-7"/>
-            <p className="text-muted-foreground text-justify">{data?.description}</p>
-            <Separator className="my-7"/>
+            <Separator className='my-7' />
+            <p className='text-muted-foreground text-justify'>
+              {data?.description}
+            </p>
+            <Separator className='my-7' />
             <HomeMap locationValue={country?.value as string} />
           </div>
-          <SelectCalendar />
+          <form action={createReservation}>
+            <input type='hidden' name='homeId' value={params.id} />
+            <input type='hidden' name='userId' value={user?.id} />
+            <SelectCalendar reservation={data?.Reservation} />
+            {user?.id ? (
+              <ReservationSubmitButton />
+            ) : (
+              <Button className='w-full' asChild>
+                <Link href={'/api/auth/login'}>Make a Reservation</Link>
+              </Button>
+            )}
+          </form>
         </div>
       </div>
     </>
