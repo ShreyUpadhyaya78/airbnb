@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { createLocation } from '@/app/actions';
 
-export default function addressRoute({params}:{params:{id:string}}) {
+export default function AddressRoute({params}:{params:{id:string}}) {
   const { getAllCountries } = useCountries();
   const [locationValue,setLocationValue]=useState("");
   const LazyMap=dynamic(()=> import ("@/app/components/Map"),{
