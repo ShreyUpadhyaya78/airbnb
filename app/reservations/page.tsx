@@ -6,6 +6,7 @@ import { unstable_noStore as noStore } from 'next/cache';
 import ListingCard from '../components/ListingCard';
 import NoItems from '../components/NoItems';
 
+
 async function getData(userId: string) {
   noStore();
   const data = await prisma.reservation.findMany({
