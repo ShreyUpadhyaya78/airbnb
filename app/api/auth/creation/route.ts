@@ -28,5 +28,7 @@ if(!dbUser){
     });
 
 }
-return NextResponse.redirect('http://localhost:3000');
+return NextResponse.redirect(
+  'https://airbnb-9o8f4n38c-shrey-upadhyayas-projects.vercel.app'
+);
 }
